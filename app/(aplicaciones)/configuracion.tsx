@@ -1,108 +1,107 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import { Stack } from 'expo-router'; // Importante para el título
+// app/aplicaciones/configuracion.tsx
+import React, { useState } from 'react';
+import { 
+  StyleSheet, Text, View, TextInput, TouchableOpacity, 
+  Alert, ScrollView, Image, Switch 
+} from 'react-native';
+import { Stack } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+import { useUser } from '../../UserContext'; // Importamos nuestro hook
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ConfiguracionScreen() {
+  const { settings, updateSettings } = useUser();
+  
+  // Estados locales temporales para los inputs
+  const [tempName, setTempName] = useState(settings.username);
+  const [tempPass, setTempPass] = useState(settings.password);
+
+  // FUNCIÓN: Cambiar Wallpaper
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [9, 16], // Relación de aspecto de pantalla de celular
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      // Guardamos la URI de la imagen en el contexto global
+      updateSettings({ wallpaperUri: result.assets[0].uri });
+      Alert.alert("Fondo Actualizado", "Tu pantalla de inicio se ve genial ahora.");
+    }
+  };
+
+  // FUNCIÓN: Guardar cambios de texto
+  const handleSaveText = () => {
+    updateSettings({ 
+        username: tempName, 
+        password: tempPass 
+    });
+    Alert.alert("Guardado", "Tus credenciales han sido actualizadas.");
+  };
+
   return (
     <View style={styles.container}>
-      {/* Esto le pone un título al "header" o barra superior de esta pantalla */}
-      <Stack.Screen options={{ title: 'Configuración' }} />
-
-      {/* Usamos ScrollView por si la lista de opciones es muy larga */}
-      <ScrollView>
+      <Stack.Screen options={{ headerShown: false }} />
+      
+      <View style={styles.header}>
         <Text style={styles.headerTitle}>Ajustes</Text>
+      </View>
 
-        {/* Grupo de Opciones 1 */}
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        
+        {/* SECCIÓN 1: PERFIL */}
         <View style={styles.section}>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Wi-Fi')}>
-            <Text style={styles.optionIcon}>📡</Text>
-            <Text style={styles.optionText}>Wi-Fi</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Bluetooth')}>
-            <Text style={styles.optionIcon}> Bluetooth</Text>
-            <Text style={styles.optionText}>Bluetooth</Text>
-          </Pressable>
-        </View>
-
-        {/* Grupo de Opciones 2 */}
-        <View style={styles.section}>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Pantalla')}>
-            <Text style={styles.optionIcon}>☀️</Text>
-            <Text style={styles.optionText}>Pantalla y Brillo</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Sonido')}>
-            <Text style={styles.optionIcon}>🔊</Text>
-            <Text style={styles.optionText}>Sonido</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Fondo de Pantalla')}>
-            <Text style={styles.optionIcon}>🖼️</Text>
-            <Text style={styles.optionText}>Fondo de Pantalla</Text>
-          </Pressable>
-        </View>
-        <View style={styles.section}>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Pantalla')}>
-            <Text style={styles.optionIcon}>☀️</Text>
-            <Text style={styles.optionText}>Pantalla y Brillo</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Sonido')}>
-            <Text style={styles.optionIcon}>🔊</Text>
-            <Text style={styles.optionText}>Sonido</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Fondo de Pantalla')}>
-            <Text style={styles.optionIcon}>🖼️</Text>
-            <Text style={styles.optionText}>Fondo de Pantalla</Text>
-          </Pressable>
-        </View>
-        <View style={styles.section}>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Pantalla')}>
-            <Text style={styles.optionIcon}>☀️</Text>
-            <Text style={styles.optionText}>Pantalla y Brillo</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Sonido')}>
-            <Text style={styles.optionIcon}>🔊</Text>
-            <Text style={styles.optionText}>Sonido</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Fondo de Pantalla')}>
-            <Text style={styles.optionIcon}>🖼️</Text>
-            <Text style={styles.optionText}>Fondo de Pantalla</Text>
-          </Pressable>
-        </View>
-        <View style={styles.section}>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Pantalla')}>
-            <Text style={styles.optionIcon}>☀️</Text>
-            <Text style={styles.optionText}>Pantalla y Brillo</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Sonido')}>
-            <Text style={styles.optionIcon}>🔊</Text>
-            <Text style={styles.optionText}>Sonido</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Fondo de Pantalla')}>
-            <Text style={styles.optionIcon}>🖼️</Text>
-            <Text style={styles.optionText}>Fondo de Pantalla</Text>
-          </Pressable>
-        </View>
-        <View style={styles.section}>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Pantalla')}>
-            <Text style={styles.optionIcon}>☀️</Text>
-            <Text style={styles.optionText}>Pantalla y Brillo</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Sonido')}>
-            <Text style={styles.optionIcon}>🔊</Text>
-            <Text style={styles.optionText}>Sonido</Text>
-          </Pressable>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Fondo de Pantalla')}>
-            <Text style={styles.optionIcon}>🖼️</Text>
-            <Text style={styles.optionText}>Fondo de Pantalla</Text>
-          </Pressable>
+            <Text style={styles.sectionTitle}>PERFIL DE USUARIO</Text>
+            <View style={styles.card}>
+                <View style={styles.inputRow}>
+                    <Text style={styles.label}>Nombre</Text>
+                    <TextInput 
+                        style={styles.input} 
+                        value={tempName} 
+                        onChangeText={setTempName}
+                    />
+                </View>
+                <View style={styles.divider} />
+                <View style={styles.inputRow}>
+                    <Text style={styles.label}>Contraseña</Text>
+                    <TextInput 
+                        style={styles.input} 
+                        value={tempPass} 
+                        onChangeText={setTempPass}
+                        secureTextEntry // Oculta caracteres
+                    />
+                </View>
+            </View>
+            <TouchableOpacity style={styles.saveBtn} onPress={handleSaveText}>
+                <Text style={styles.saveText}>Guardar Cambios de Perfil</Text>
+            </TouchableOpacity>
         </View>
 
-        {/* Grupo de Opciones 3 */}
+        {/* SECCIÓN 2: FONDO DE PANTALLA */}
         <View style={styles.section}>
-          <Pressable style={styles.option} onPress={() => alert('Abrir Acerca de')}>
-            <Text style={styles.optionIcon}>ℹ️</Text>
-            <Text style={styles.optionText}>Acerca del dispositivo</Text>
-          </Pressable>
+            <Text style={styles.sectionTitle}>PERSONALIZACIÓN</Text>
+            <View style={styles.card}>
+                <View style={styles.wallpaperPreview}>
+                    {settings.wallpaperUri ? (
+                        <Image source={{ uri: settings.wallpaperUri }} style={styles.previewImage} />
+                    ) : (
+                        <View style={[styles.previewImage, { backgroundColor: '#333' }]} />
+                    )}
+                </View>
+                <TouchableOpacity style={styles.actionBtn} onPress={pickImage}>
+                    <Text style={styles.actionText}>Cambiar Fondo de Pantalla</Text>
+                    <Ionicons name="image-outline" size={20} color="#007AFF" />
+                </TouchableOpacity>
+            </View>
         </View>
+
+        {/* SECCIÓN 3: INFO SISTEMA */}
+        <View style={styles.section}>
+              <Text style={styles.infoText}>React Native OS Simulator v1.0</Text>
+        </View>
+
       </ScrollView>
     </View>
   );
@@ -111,37 +110,97 @@ export default function ConfiguracionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f7', // Un fondo gris claro, típico de settings
+    backgroundColor: '#F2F2F7', // Gris claro típico de ajustes
+  },
+  header: {
+    paddingTop: 60,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e5ea',
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: 34,
     fontWeight: 'bold',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
-    color: '#000',
+  },
+  scrollContent: {
+    padding: 20,
   },
   section: {
+    marginBottom: 30,
+  },
+  sectionTitle: {
+    fontSize: 13,
+    color: '#6d6d72',
+    marginBottom: 10,
+    marginLeft: 10,
+    fontWeight: '600',
+  },
+  card: {
     backgroundColor: '#fff',
-    borderRadius: 12,
-    marginHorizontal: 15,
-    marginVertical: 10,
-    overflow: 'hidden', // Para que el borde redondeado se aplique a los hijos
+    borderRadius: 10,
+    overflow: 'hidden',
   },
-  option: {
+  inputRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f7',
+    padding: 15,
   },
-  optionIcon: {
-    fontSize: 20,
-    marginRight: 15,
+  label: {
+    fontSize: 17,
+    color: 'black',
+    width: 100,
   },
-  optionText: {
+  input: {
+    flex: 1,
+    fontSize: 17,
+    color: '#007AFF',
+    textAlign: 'right',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#e5e5ea',
+    marginLeft: 15,
+  },
+  saveBtn: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  saveText: {
+    color: '#007AFF',
     fontSize: 16,
-    color: '#000',
+    fontWeight: '600',
+  },
+  // Wallpaper Styles
+  wallpaperPreview: {
+    height: 200,
+    width: '100%',
+    backgroundColor: '#eee',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  previewImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  actionBtn: {
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e5ea',
+  },
+  actionText: {
+    fontSize: 17,
+    color: '#007AFF',
+  },
+  infoText: {
+    textAlign: 'center',
+    color: '#8e8e93',
+    fontSize: 12,
   },
 });

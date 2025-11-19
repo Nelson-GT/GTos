@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-
-const PIN_CORRECTO = '1234';
+import { useUser } from '../UserContext';
 
 export default function PinScreen() {
+  const { settings } = useUser();
+  const PIN_CORRECTO = settings.password || '1234';
+  const PIN_ARRAY: number[] = PIN_CORRECTO
+    .split('')
+    .map((ch:any) => parseInt(ch, 10))
+    .filter((n:any) => !Number.isNaN(n));
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
 
@@ -19,8 +25,6 @@ export default function PinScreen() {
 
   const handleSubmit = () => {
     if (pin === PIN_CORRECTO) {
-      // ¡Correcto! Reemplazamos la pantalla actual con el "escritorio".
-      // "replace" evita que el usuario pueda "volver" al PIN.
       router.replace('/home');
     } else {
       setError(true);
@@ -49,7 +53,7 @@ export default function PinScreen() {
       
       <View style={styles.pinDisplay}>
         {/* Muestra los "círculos" del PIN */}
-        {[0, 1, 2, 3].map((i) => (
+        {PIN_ARRAY.map((i) => (
           <View
             key={i}
             style={[styles.pinDot, pin.length > i ? styles.pinDotFilled : null]}
@@ -64,14 +68,14 @@ export default function PinScreen() {
         {renderRow(['4', '5', '6'])}
         {renderRow(['7', '8', '9'])}
         <View style={styles.row}>
-          <Pressable style={styles.key} onPress={handleSubmit}>
-            <Text style={styles.keyText}>OK</Text>
+          <Pressable style={styles.key} onPress={() => handlePress('del')}>
+            <Text style={styles.keyText}>DEL</Text>
           </Pressable>
           <Pressable style={styles.key} onPress={() => handlePress('0')}>
             <Text style={styles.keyText}>0</Text>
           </Pressable>
-          <Pressable style={styles.key} onPress={() => handlePress('del')}>
-            <Text style={styles.keyText}>DEL</Text>
+          <Pressable style={styles.key} onPress={handleSubmit}>
+            <Text style={styles.keyText}>OK</Text>
           </Pressable>
         </View>
       </View>

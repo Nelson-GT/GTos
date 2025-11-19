@@ -1,19 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { ImageBackground, View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { Link } from 'expo-router';
+import { useUser } from '../../UserContext';
+import Feather from '@expo/vector-icons/Feather';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 // Icono reutilizable
 type AppIconProps = {
   href: string;
-  emoji: string;
+  emoji?: string;
   label: string;
+  children?: React.ReactNode;
 };
 
-const AppIcon: React.FC<AppIconProps> = ({ href, emoji, label }) => (
+const AppIcon: React.FC<AppIconProps> = ({ href, emoji, label, children }) => (
   <Link href={href as any} asChild>
     <Pressable style={styles.iconContainer}>
       <View style={styles.iconBackground}>
-        <Text style={styles.iconEmoji}>{emoji}</Text>
+        {children ? (
+          children
+        ) : (
+          <Text style={styles.iconEmoji}>{emoji ?? '❔'}</Text>
+        )}
       </View>
       <Text style={styles.iconLabel}>{label}</Text>
     </Pressable>
@@ -21,31 +29,60 @@ const AppIcon: React.FC<AppIconProps> = ({ href, emoji, label }) => (
 );
 
 export default function HomeScreen() {
+  const { settings } = useUser();
+  
+  const nombreUsuario = settings.username || 'Usuario';
+  const backgroundSource = settings.wallpaperUri 
+    ? { uri: settings.wallpaperUri } 
+    : require('../../assets/images/wallpaper.jpg');
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Mi Sistema Operativo</Text>
-      <Text style={styles.subtitle}>Toca un icono para abrir una app</Text>
+    <ImageBackground
+      source={backgroundSource} 
+      style={styles.container}
+      resizeMode="cover"
+    >
+      <ScrollView style={styles.container}>
+        <View style={styles.iconGrid}>
+          <Text style={styles.title}>Bienvenido, {nombreUsuario}</Text>
+        </View>
 
-      {/* Contenedor para nuestros "iconos" de apps */}
-      <View style={styles.iconGrid}>
-        
-        {/* ICONO DE CONFIGURACIÓN */}
-        {/* El link ahora es solo "/configuracion" porque está
-            dentro del mismo grupo (aplicaciones) */}
-        <AppIcon href="/configuracion" emoji="⚙️" label="Configuración" />
+        <View style={styles.iconGrid}>
+          
+          <AppIcon href="/configuracion" label="Configuración" >
+            <Feather name="settings" size={24} color="black"/>
+          </AppIcon>
+          
+          <AppIcon href="/calculadora" label="Calculadora">
+            <MaterialCommunityIcons name="math-integral" size={24} color="black" />
+          </AppIcon>
+          
+          <AppIcon href="/camara" label="Camara" >
+            <Feather name="camera" size={24} color="black" />
+          </AppIcon>
+          
+          <AppIcon href="/galeria" label="Galería" >
+            <MaterialCommunityIcons name="view-gallery-outline" size={24} color="black" />
+          </AppIcon>
 
-        {/* --- BOTONES DE PRUEBA --- */}
-        
-        <AppIcon href="/calculadora" emoji="🧮" label="Calculadora" />
-        
-        <AppIcon href="/notas" emoji="📝" label="Notas" />
+          <AppIcon href="/notas" label="Notas">
+            <Feather name="book-open" size={24} color="black" />
+          </AppIcon>
+          
+          <AppIcon href="/contactos" label="Contactos" >
+            <Feather name="users" size={24} color="black" />
+          </AppIcon>
+          
+          <AppIcon href="/mensajes" label="Mensajes" >
+            <Feather name="message-circle" size={24} color="black" />
+          </AppIcon>
 
-        <AppIcon href="/mensajes" emoji="💬" label="Mensajes" />
-
-        <AppIcon href="/telefono" emoji="📞" label="Teléfono" />
-
-      </View>
-    </ScrollView>
+          <AppIcon href="/telefono" label="Teléfono" >
+            <Feather name="phone-call" size={24} color="black" />
+          </AppIcon>
+          
+        </View>
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
@@ -54,12 +91,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5', // Fondo del escritorio
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginTop: 50, // Espacio desde la barra de estado
+    marginTop: 50,
+    marginBottom: 30,
     color: '#333',
   },
   subtitle: {
@@ -69,11 +106,12 @@ const styles = StyleSheet.create({
   },
   iconGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // Para que los iconos bajen si no caben
-    justifyContent: 'flex-start',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 25,
   },
   iconContainer: {
-    width: 80, // Ancho del icono + label
+    width: 80,
     margin: 10,
     alignItems: 'center',
   },
